@@ -12,7 +12,7 @@ _start:
     mov rax,0
     mov rdi,0
     mov rsi, buffer
-    mov rdx, 2
+    mov rdx, 8
     syscall
 
     mov rax, 1
@@ -28,9 +28,9 @@ _start:
     cmp al, '2'
     jne skip0
     mov al, byte[buffer+2]
-    cmp al, ''
-    jne skip0
-
+    cmp al, 0
+    je passkip0
+passkip0:
     mov rdi,0 
 
 skip0:  

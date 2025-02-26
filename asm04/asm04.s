@@ -12,7 +12,7 @@ _start:
     mov rax,0
     mov rdi,0
     mov rsi, buffer
-    mov rdx, 2
+    mov rdx, 8
     syscall
 
     mov rax, 1
@@ -20,12 +20,20 @@ _start:
     mov rsi, message
     mov rdx, msg_len
     syscall
+
+    mov al, byte[buffer]
+    cmp al,'0'
+    jl isnotnumber
+    cmp al, '9'
+    jg isnotnumber
     
     mov al, byte[buffer]
     test al,1
     jne skip0
-
+goto0:
     mov rdi,0 
+isnotnumber:
+    mov rdi, 2
 
 skip0:  
     mov rax, 60    
