@@ -1,44 +1,47 @@
 section .bss
-    buffer resb 8
+    buffer resb 8        ; Tampon pour lire l'entrée standard (8 caractères max)
 
 section .data
-    message db "1337", 0xA  ; Le message avec un saut de ligne
-    msg_len equ $ - message           ; Calcul de la longueur du message
+    message db "1337", 0xA     ; Message à afficher + saut de ligne
+    msg_len equ $ - message    ; Calcul automatique de la longueur
 
 section .text
     global _start
 
 _start:
-    mov rax,0
-    mov rdi,0
-    mov rsi, buffer
-    mov rdx, 8
-    cmp message, 3
-    je passkip0
+    ; Lecture standard input (read)
+    mov rax, 0            ; SYSCALL: read
+    mov rdi, 0            ; fd = 0 (stdin)
+    mov rsi, buffer       ; buffer où stocker
+    mov rdx, 8            ; nombre max de caractères à lire
     syscall
-  
-    mov al, byte[buffer]
+
+    ; Vérification "42" + fin de chaîne après 2 caractères
+    mov al, byte [buffer]
     cmp al, '4'
-    jne skip0
-    mov al, byte[buffer+1]
+    jne fin_erreur
+
+    mov al, byte [buffer + 1]
     cmp al, '2'
-    jne skip0
-    mov al, byte[buffer+2]
-    cmp al, 0
-    je passkip0
-passkip0:
+    jne fin_erreur
 
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, message
-    mov rdx, msg_len
+    mov al, byte [buffer + 2]
+    cmp al, 0xA        ; on vérifie que l'utilisateur a appuyé sur ENTREE (\n)
+    jne fin_erreur
+
+    ; C'est exactement "42" (avant retour à la ligne) : on affiche "1337"
+    mov rax, 1         ; SYSCALL: write
+    mov rdi, 1         ; fd = 1 (stdout)
+    mov rsi, message   ; adresse du message
+    mov rdx, msg_len   ; longueur à écrire
     syscall
 
-    mov rax, 60
-    mov rdi, 0
+    ; Sortie du programme
+    mov rax, 60        ; SYSCALL: exit
+    xor rdi, rdi       ; code retour 0 (succès)
     syscall
 
-skip0:  
+fin_erreur:
     mov rax, 60
-    mov rdi, 1
-    syscall      
+    mov rdi, 1         ; code retour 1 (échec)
+    syscall

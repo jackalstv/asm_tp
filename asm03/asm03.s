@@ -12,10 +12,9 @@ _start:
 
     mov rdi, [rsp]
     cmp rdi, 2
-    jl goto0
+    jl skip0
 
     mov rsi, [rsp+16]
-    
 
     mov al, byte[rsi]
     cmp al, '4'
@@ -24,7 +23,7 @@ _start:
     cmp al, '2'
     jne skip0
     mov al, byte[rsi+2]
-    cmp al, ''
+    cmp al, 0xA
     jne skip0
 goto0:
 
