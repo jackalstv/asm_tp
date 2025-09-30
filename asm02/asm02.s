@@ -13,14 +13,10 @@ _start:
     mov rdi,0
     mov rsi, buffer
     mov rdx, 8
+    cmp message, 3
+    je passkip0
     syscall
-
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, message
-    mov rdx, msg_len
-    syscall
-    
+  
     mov al, byte[buffer]
     cmp al, '4'
     jne skip0
@@ -31,8 +27,18 @@ _start:
     cmp al, 0
     je passkip0
 passkip0:
-    mov rdi,0 
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, message
+    mov rdx, msg_len
+    syscall
+
+    mov rax, 60
+    mov rdi, 0
+    syscall
 
 skip0:  
-    mov rax, 60    
+    mov rax, 60
+    mov rdi, 1
     syscall      

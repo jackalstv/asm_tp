@@ -1,10 +1,6 @@
 section .bss
     buffer resb 8
 
-section .data
-    message db "1337", 0xA  ; Le message avec un saut de ligne
-    msg_len equ $ - message           ; Calcul de la longueur du message
-
 section .text
     global _start
 
@@ -15,26 +11,20 @@ _start:
     mov rdx, 8
     syscall
 
-    mov rax, 1
-    mov rdi, 1
-    mov rsi, message
-    mov rdx, msg_len
-    syscall
-
-    mov al, byte[buffer]
-    cmp al,'0'
-    jl isnotnumber
-    cmp al, '9'
-    jg isnotnumber
     
     mov al, byte[buffer]
-    test al,1
+    cmp al, '4'
     jne skip0
-goto0:
-    mov rdi,0 
-isnotnumber:
-    mov rdi, 2
+    mov al, byte[buffer+2]
+    cmp al, 0x0A
+    je passkip0
+passkip0:
+
+    mov rax, 60
+    mov rdi, 0
+    syscall
 
 skip0:  
-    mov rax, 60    
+    mov rax, 60
+    mov rdi, 1
     syscall      
