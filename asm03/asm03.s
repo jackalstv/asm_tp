@@ -23,7 +23,7 @@ _start:
     cmp al, '2'
     jne skip0
     mov al, byte[rsi+2]
-    cmp al, 0xA
+    cmp al, 0x00
     jne skip0
 goto0:
 
