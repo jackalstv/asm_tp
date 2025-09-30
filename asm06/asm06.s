@@ -38,27 +38,27 @@ _start:
 atoi:
     xor rax, rax        ; résultat = 0
     xor rcx, rcx        ; signe = positif
-    movzx r8, byte [rsi]
+    movzx r8, byte [rsi] ; charger premier caractère
     
     ; Vérifier si premier caractère est '-'
     cmp r8, '-'
-    jne .loop
+    jne .loop ; si pas '-', continuer la conversion
     mov rcx, 1          ; signe = négatif
     inc rsi             ; Passer le '-'
     
-.loop:
-    movzx r8, byte [rsi]
+.loop: ; le label .loop est utilisé pour boucler sur chaque caractère de la chaîne afin de construire le nombre entier
+    movzx r8, byte [rsi] ; movzx permet de charger un octet dans un registre plus grand donc ici il met à 0 les bits de poids fort donc r8 contient le caractère courant 
     cmp r8, 0           ; Fin de chaîne?
-    je .done
-    cmp r8, 10          ; Saut de ligne?
-    je .done
+    je .done ; si fin de chaîne, terminer
+    cmp r8, 10          ; Vérifier saut de ligne
+    je .done ; si saut de ligne, terminer
     cmp r8, '0'
-    jb .done
-    cmp r8, '9'
-    ja .done
+    jb .done ; si < '0', terminer
+    cmp r8, '9' 
+    ja .done ; si > '9', terminer
     
     ; rax = rax * 10 + (r8 - '0')
-    imul rax, rax, 10
+    imul rax, rax, 10 ; imul effectue une multiplication de rax par 10 et stocke le résultat dans rax
     sub r8, '0'
     add rax, r8
     inc rsi
@@ -66,17 +66,17 @@ atoi:
     
 .done:
     test rcx, rcx       ; Si négatif
-    jz .positive
+    jz .positive ; si pas négatif, sauter
     neg rax             ; Inverser le signe
 .positive:
-    ret
+    ret ; ret permet de retourner de la fonction en utilisant l'adresse de retour stockée sur la pile qui est ici l'instruction suivante après l'appel de la fonction
 
 ; Fonction print_number: afficher un entier signé
 ; Entrée: rdi = nombre à afficher
 print_number:
     mov rax, rdi
     mov rsi, message
-    add rsi, 19         ; Pointer à la fin du buffer
+    add rsi, 19         ; 19ème position pour le saut de ligne
     mov byte [rsi], 10  ; Saut de ligne
     dec rsi
     
@@ -88,7 +88,7 @@ print_number:
     mov rcx, 1
     
 .convert:
-    mov rbx, 10
+    mov rbx, 10 ; 
 .loop:
     xor rdx, rdx
     div rbx             ; rax = quotient, rdx = reste
