@@ -12,19 +12,29 @@ _start:
     mov rdx, 2
     syscall
 
-    ; Chargement des deux caractères
+    ; Chargement du premier caractère
     movzx rax, byte [buffer]      ; Premier chiffre
-    movzx r8, byte [buffer+1]     ; Deuxième chiffre
     
     ; Conversion ASCII -> nombre
     sub rax, '0'
-    sub r8, '0'
     
-    ; Validation des chiffres (0-9)
+    ; Validation du premier chiffre (0-9)
     cmp rax, 0
     jl exitError
     cmp rax, 9
     jg exitError
+    
+    ; Chargement du deuxième caractère
+    movzx r8, byte [buffer+1]
+    
+    ; Vérifier si c'est un retour à la ligne (entrée à 1 chiffre)
+    cmp r8, 10                    ; 10 = '\n' en ASCII
+    je un_seul_chiffre
+    
+    ; Conversion ASCII -> nombre
+    sub r8, '0'
+    
+    ; Validation du deuxième chiffre (0-9)
     cmp r8, 0
     jl exitError
     cmp r8, 9
@@ -33,6 +43,13 @@ _start:
     ; Construction du nombre : n = premier_chiffre * 10 + deuxième_chiffre
     imul rax, 10
     add rax, r8
+    jmp continuer_test
+
+un_seul_chiffre:
+    ; rax contient déjà le chiffre (0-9)
+    ; Pas besoin de calcul supplémentaire
+
+continuer_test:
     mov r10, rax              ; r10 = nombre à tester
     
     ; Cas spéciaux
