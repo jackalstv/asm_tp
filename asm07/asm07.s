@@ -26,6 +26,10 @@ check_two_digits:
     ; Vérifier si c'est un nombre à 2 chiffres
     movzx rax, byte [buffer]
     sub al, '0'
+    cmp al, 9
+    ja exit_error           ; Premier caractère invalide
+    cmp al, 0
+    jl exit_error
     movzx rbx, byte [buffer+1]
     cmp bl, 10              ; newline?
     je test_prime           ; Non, c'était un seul chiffre
