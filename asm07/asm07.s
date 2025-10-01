@@ -60,9 +60,8 @@ test_prime:
     mov rbx, 3              ; Diviseur courant
     
 loop_divisors:
-    ; Si diviseur² > nombre, c'est premier
     mov rax, rbx
-    mul rbx                 ; RAX = RBX²
+    mul rbx             ; RAX = RBX²
     cmp rax, r8
     jg is_prime
     
