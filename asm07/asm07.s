@@ -20,15 +20,40 @@ _start:
     jg check_two_digits     ; Peut-être un nombre à 2 chiffres
     
     sub al, '0'             ; Conversion simple (0-9)
+    jmp test_prime
 
 check_two_digits:
     ; Vérifier si c'est un nombre à 2 chiffres
     movzx rax, byte [buffer]
     sub al, '0'
     movzx rbx, byte [buffer+1]
+    cmp bl, 10              ; newline?
+    je test_prime           ; Non, c'était un seul chiffre
     sub bl, '0'
     imul ax, 10
     add al, bl
+    
+test_prime:
+    ; RAX contient maintenant le nombre à tester
+    mov r8, rax             ; Sauvegarder le nombre original dans r8
+    
+    ; Cas spéciaux: 0, 1 ne sont pas premiers
+    cmp r8, 2
+    jl not_prime
+    
+    ; 2 est premier
+    cmp r8, 2
+    je is_prime
+
+    cmp r8,1
+    je not_prime
+    
+    ; Les nombres pairs ne sont pas premiers
+    test r8b, 1
+    jz not_prime
+    
+    ; Tester les diviseurs de 3 à sqrt(n)
+    mov rbx, 3              ; Diviseur courant
     
 loop_divisors:
     ; Si diviseur² > nombre, c'est premier
@@ -44,6 +69,8 @@ loop_divisors:
     
     cmp rdx, 0              ; Reste == 0 ?
     je not_prime            ; Oui -> pas premier
+    cmp rax,1
+    je not_prime 
     
     ; Passer au diviseur suivant (seulement impairs)
     add rbx, 2
