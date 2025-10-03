@@ -15,12 +15,13 @@ _start:
     call atoi
     mov r12, rax            ; Sauvegarder N dans r12
     
-    ; Vérifier que N > 0
-    test r12, r12
-    jle fin_erreur
-    
     ; Calculer la somme de 1 à N-1
     xor r14, r14            ; Somme = 0
+    
+    ; Si N <= 1, la somme est 0
+    cmp r12, 1
+    jle .print_result
+    
     mov r13, 1              ; i = 1
     
 .sum_loop:
@@ -28,6 +29,8 @@ _start:
     inc r13                 ; i++
     cmp r13, r12            ; i < N ?
     jl .sum_loop
+
+.print_result:
     
     ; Afficher le résultat
     mov rdi, r14
